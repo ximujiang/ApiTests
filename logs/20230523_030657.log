@@ -1,0 +1,11 @@
+2023-05-23 03:06:57 [DEBUG]: POST request to https://login.welink.huaweicloud.com/sso/v3/pclogintenant
+2023-05-23 03:06:57 [DEBUG]: request body: {'tenantId': 'A732A9AEE6984CFA97D9313C2A2E99A9', 'thirdAuthType': 1, 'userName': 'admin@d16fa496f47', 'password': 'lkjLKJ+2023', 'redirect_url': 'redirect_uri=https%3A%2F%2Fwelink.huaweicloud.com%2Fweb%2Fapp%2F%23%2Fathena-tenant%2FrightManaulTrigger%2FdesPage', 'errorCode': None, 'sliderUid': None, 'mobile': '+86-18576797850'}
+2023-05-23 03:06:57 [DEBUG]: Starting new HTTPS connection (1): login.welink.huaweicloud.com:443
+2023-05-23 03:06:58 [DEBUG]: https://login.welink.huaweicloud.com:443 "POST /sso/v3/pclogintenant HTTP/1.1" 200 None
+2023-05-23 03:06:58 [DEBUG]: status code: 200
+2023-05-23 03:06:58 [DEBUG]: response body: {"code":"0","forceModifyPassword":false,"message":"ok","url":"https://welink.huaweicloud.com/web/app/#/athena-tenant/rightManaulTrigger/desPage"}
+2023-05-23 03:06:58 [DEBUG]: GET request to https://welink.huaweicloud.com/athenatenant/v1/findcontextawareevent
+2023-05-23 03:06:58 [DEBUG]: Starting new HTTPS connection (1): welink.huaweicloud.com:443
+2023-05-23 03:06:58 [DEBUG]: https://welink.huaweicloud.com:443 "GET /athenatenant/v1/findcontextawareevent?name=&pageNumber=1&pageSize=10&startTime=2023-04-16&endTime=2023-05-16&n=0.5998682653328589&language=zh HTTP/1.1" 200 None
+2023-05-23 03:06:58 [DEBUG]: status code: 200
+2023-05-23 03:06:58 [DEBUG]: response body: {"error":"","data":{"contextAwareEvent":[{"eventId":"2f23ff9c-38c8-4bf6-8c06-675385f8fc19","readerShip":"-","endDate":1683346500000,"pushStatus":2,"unreadUserCount":"-","currentDate":1684782418271,"touchDate":1683260149734,"eventType":"20105","source":1,"touchPeople":"admin@d16fa496f47","update_date":1683260149734,"pushType":0,"userCount":"-","contextAwareName":"test","generateStatus":1,"contextAwareId":"01e0e1c9-d78d-4564-a8af-a5b8a3731da6","periods":[],"reviewStatus":0,"id":"b584a2d1-874f-4a94-b723-dfebb47daee9","pushTime":"08:30","startDate":1683260149000}],"pageCount":1,"pageTotal":1},"code":"200","message":"ok"}

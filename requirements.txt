@@ -1,0 +1,12 @@
+pytest~=5.4.1
+Pyyaml
+requests~=2.30.0
+urllib3
+allure-pytest
+pytest-base-url
+pytest-rerunfailures
+pytest-ordering
+pytest-parallel
+jinja2
+jsonpath~=0.82
+jmespath~=1.0.1
