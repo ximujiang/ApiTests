@@ -5,13 +5,14 @@ import requests
 
 from utils import exceptions
 from utils.log import log
+from config import BASE_URL, DEFAULT_TIMEOUT
 
 
 class ApiBase:
     # 构造函数，传入session对象
-    def __init__(self, base_url: str = None, timeout=10, headers=None):
-        self.base_url = base_url
-        self.timeout = timeout
+    def __init__(self, headers=None):
+        self.base_url = BASE_URL
+        self.timeout = DEFAULT_TIMEOUT
         self.session = requests.Session()
         self.headers = headers or self.session.headers
 
@@ -29,12 +30,6 @@ class ApiBase:
         else:
             log.error(f'{url} --> url invalid or base url missed!')
             raise exceptions.ParserError("url invalid or base url missed!")
-
-    # 判断url是否需要拼接base_url
-    def _build_url(self, url):
-        if url.startswith('http://') or url.startswith('https://'):
-            return url
-        return "{}{}".format(self.base_url, url)
 
     # 发送请求
     def send_request(self, method, url, base_url=None, data=None, json=None, headers=None, **kwargs):

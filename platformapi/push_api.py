@@ -2,8 +2,8 @@ from utils.api_base import ApiBase
 
 
 class PushApi(ApiBase):
-    def __init__(self, base_url, timeout=10):
-        super().__init__(base_url, timeout)
+    def __init__(self):
+        super().__init__()
 
     def login_tenant(self):
         """
@@ -11,7 +11,7 @@ class PushApi(ApiBase):
         """
         cookies = {
             'Cookie':
-                'HttpOnly; siteCode=2B32DC97D4D74484816EB181BE7C67A3; siteThirdLoginUrl=undefined; siteType=1; siteThirdAuthType=undefined; siteTenantId=undefined; TWO-FACTOR-LOGIN-CODE="t4ErCtlLJM7wN12PqQPc6w==Gq53Z88d6Kk1MeAsfkI5sYMw8f9/PQNahE4a2tYaqJnDaN+vyck1njbzhDtw+hDuHaCtA+jwyU+pax6gC00JmlM="; ua=admin@d16fa496f47; vk=d7a7b857-4ac0-4928-82db-9c655a547ff2; lang=zh; HWWAFSESID=2b209792a09749b1dd; HWWAFSESTIME=1684773572556; cdn_token=A732A9AEE6984CFA97D9313C2A2E99A9#1684816785#89ea656c4695a2d0a6780e274cb1ec2c7ebc27a6924e0b18cca9db8f8f85685c; x-wlk-gray=0; SessionID=ec3d46a4-d0d7-4fb4-bc69-463cf20bd30f; ad_sc=; ad_mdm=; ad_cmp=; ad_ctt=; ad_tm=; ad_adp=; cf=Direct; X-XSRF-TOKEN=9005EFD0ECA79E34013AC548C956553261E91A8C19E62B4B41ED6AED8571121331C261B766BC18B6EF3BDE943B7B9061770F; JSESSIONID=78F2B6D91AC30B5AF0F985725429804EF16AE73A0A7705E1'
+                'HttpOnly; siteCode=2B32DC97D4D74484816EB181BE7C67A3; siteThirdLoginUrl=undefined; siteType=1; siteThirdAuthType=undefined; siteTenantId=undefined; ua=admin@d16fa496f47; vk=d7a7b857-4ac0-4928-82db-9c655a547ff2; lang=zh; HWWAFSESID=2b209792a09749b1dd; HWWAFSESTIME=1684773572556; x-wlk-gray=0; SessionID=ec3d46a4-d0d7-4fb4-bc69-463cf20bd30f; ad_sc=; ad_mdm=; ad_cmp=; ad_ctt=; ad_tm=; ad_adp=; cf=Direct; TWO-FACTOR-LOGIN-CODE="+OkGIr1SH4P+nCMsnMwy7Q==/fMoqnfEO0Qzd3Q8Hv0GXKxS9GDdeTVzX9B/wvy6RGQS3Tasn1hDwk1Td+e9wayiEmlvhE5gCv2n4Wkpw8PuHvU="; cdn_token=A732A9AEE6984CFA97D9313C2A2E99A9#1685478541#880910e9d8fd9aa0812bc235264b5e718a692be533e450edf58d0b8dd4edc289; JSESSIONID=C663E6D957F8760D62F39BC19133565D2F1C24A5079C245B; X-XSRF-TOKEN=B50392807D146988DB26C4DD474C9E8E1CA49223CE3D9E9E0B8A527B7236856C6823A00BE3E9FF210082A97106C494E21F8E'
         }
         data = {
             'tenantId': 'A732A9AEE6984CFA97D9313C2A2E99A9',

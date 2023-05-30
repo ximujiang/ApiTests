@@ -1,0 +1,23 @@
+test_demo_one:
+  find_context_aware_event_service:
+    request:
+      name: ''
+      pageNumber: 1
+      pageSize: 10
+      startTime: '2023-04-16'
+      endTime: '2023-05-16'
+      n: 0.5998682653328589
+      language: 'zh'
+    extract:
+      startTime: ${find_context_aware_event_service.request.startTime}
+      endTime: ${find_context_aware_event_service.request.endTime}
+    validate:
+      - eq:
+          - '123'
+          - '123'
+      - str_eq:
+          - 123
+          - '123'
+      - constains:
+          - 123
+          - '12'

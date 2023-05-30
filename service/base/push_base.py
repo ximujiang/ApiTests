@@ -2,8 +2,8 @@ from platformapi.push_api import PushApi
 
 
 class PushBase(object):
-    def __init__(self, base_url=None, timeout=None):
-        self.api = PushApi(base_url=base_url, timeout=timeout)
+    def __init__(self):
+        self.api = PushApi()
 
     def login_tenant_base(self):
         return self.api.login_tenant()
