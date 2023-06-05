@@ -1,0 +1,14 @@
+2023-06-03 00:50:58 [DEBUG]: Starting new HTTPS connection (1): login.welink.huaweicloud.com:443
+2023-06-03 00:50:58 [DEBUG]: https://login.welink.huaweicloud.com:443 "POST /sso/v3/pclogintenant HTTP/1.1" 200 None
+2023-06-03 00:50:58 [DEBUG]: ===========headers：{'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'X-XSRF-TOKEN': '34CAC818979181C5544A6979B59220D7F7096C60B57F34E6F3A33421B856CF8B67C3291363D42F520521858069E7580736F8'}
+2023-06-03 00:50:58 [DEBUG]: --------------------headers：{'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'X-XSRF-TOKEN': '90E7F2D61669F811E2CBFD59C7579D3FD16AA7F457AF7AC525EBDA3DF125666615141CA8565D8CDE2C5A2AB2EA1ADFBFED92'}
+2023-06-03 00:50:58 [DEBUG]: 当前测试：test_demo_one
+2023-06-03 00:50:58 [DEBUG]: 当前测试路径：C:\Users\18576797850_12553132\PycharmProjects\ApiTests\testcase\test_demo\test_push.py
+2023-06-03 00:50:58 [DEBUG]: 用例数据路径：C:\Users\18576797850_12553132\PycharmProjects\ApiTests\testcase\test_demo\test_push.yaml
+2023-06-03 00:50:58 [INFO]: 取值表达式 find_context_aware_event_service.request.startTime
+2023-06-03 00:50:58 [INFO]: 取值异常：${find_context_aware_event_service.request.startTime}, 返回模板渲染结果: 2023-04-16
+2023-06-03 00:50:58 [INFO]: 取值表达式 find_context_aware_event_service.request.endTime
+2023-06-03 00:50:58 [INFO]: 取值异常：${find_context_aware_event_service.request.endTime}, 返回模板渲染结果: 2023-05-16
+2023-06-03 00:50:58 [DEBUG]: Starting new HTTPS connection (1): welink.huaweicloud.com:443
+2023-06-03 00:50:58 [DEBUG]: https://welink.huaweicloud.com:443 "GET /athenatenant/v1/findcontextawareevent?name=&pageNumber=1&pageSize=10&startTime=2023-04-16&endTime=2023-05-16&n=0.5998682653328589&language=zh HTTP/1.1" 403 None
+2023-06-03 00:50:58 [DEBUG]: {"code":"403","data":"","error":"CSRFValidationFilter: Token provided via HTTP Header and via Session are not equals!","message":"Internal service error."}

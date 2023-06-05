@@ -1,10 +1,12 @@
 import os
 
 import pytest
+import requests
 
 from platformapi.push_api import PushApi
 from service.scenario.push_service import PushService
 from utils import render_template_obj
+from utils.api_base import ApiBase
 from utils.base import Tenant
 from utils.common import read_yaml
 from utils.log import set_log_format, log
@@ -47,7 +49,7 @@ def pytest_configure(config):  # noqa
 
 @pytest.fixture(scope='session', autouse=True)
 def login():
-    Tenant.push_service.login_tenant_service()
+    Tenant.login_base.login_tenant()
 
 
 @pytest.fixture(scope="function")
@@ -81,3 +83,4 @@ def data(request):
     case_data = read_yaml(yaml_file_path)[test_name]
     data = render_template_obj.rend_template_any(case_data, case_data)
     return data
+
