@@ -17,9 +17,9 @@ class ApiBase:
         构造函数，初始化类的基本属性。
         """
         # API 基础 URL
-        self.base_url = read_config('DEFAULT', 'BASE_URL')
+        self.base_url = read_config('host', options='BASE_URL')
         # 请求超时时间
-        self.timeout = int(read_config('DEFAULT', 'DEFAULT_TIMEOUT'))
+        self.timeout = int(read_config('host', options='DEFAULT_TIMEOUT'))
         # 使用会话对象以便在多个请求之间共享信息
         self.session = session or requests.Session()
         # 设置请求头信息
@@ -30,8 +30,8 @@ class ApiBase:
         :return: 更新后的请求头
         """
         # 从配置文件中获取 USER_AGENT 和 TOKEN
-        user_agent = read_config('Headers', 'USER_AGENT')
-        token = read_config('Headers', 'TOKEN')
+        user_agent = read_config('Headers', options='USER_AGENT')
+        token = read_config('Headers', options='TOKEN')
 
         # 更新请求头
         self.session.headers.update({'User-Agent': f'{user_agent}'})

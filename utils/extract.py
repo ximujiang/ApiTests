@@ -17,6 +17,7 @@ def extract_by_object(response: Response, extract_expression: str):
         5. 正则表达式，例如 "re.findall('value=(.*?);', text)"，用于从响应文本中提取值
     :return: 如果符合条件的值存在，返回提取的值，否则返回 None
     """
+    # 检查extract_expression是否为字符串类型，如果不是则直接返回extract_expression
     if not isinstance(extract_expression, str):
         return extract_expression
 
@@ -27,7 +28,8 @@ def extract_by_object(response: Response, extract_expression: str):
     }
 
     # 使用属性名直接取值
-    if extract_expression in ["status_code", "url", "ok", "encoding", "text"]:
+    if extract_expression in ["status_code", "url", "ok", "encoding", "text"]:  # 判断extract_expression是否列表中的之一
+        # 使用getattr获取response对象的extract_expression属性的值，并返回
         return getattr(response, extract_expression)
 
     # 使用 JMESPath、表达式字符串从 headers 和 cookies 中取值
@@ -91,13 +93,13 @@ def extract_by_jmespath(extract_obj: dict, extract_expression: str):
     """
     根据JMESPath表达式从字典中提取数据
     :param extract_obj: 需要进行数据提取的字典对象, eg:{"name":"John","age":28,"address":
-        {"street":"123 Main St","city":"Anytown","state":"CA","zip":"12345"}}
+                        {"street":"123 Main St","city":"Anytown","state":"CA","zip":"12345"}}
     :param extract_expression: jmespath表达式，用于指定需要提取的数据,eg:address.city
     :return: 表达式提取出的对应数据
     """
-    # 如果表达式不是字符串类型，则直接返回该表达式
+    # 如果表达式不是字符串类型
     if not isinstance(extract_expression, str):
-        return extract_expression
+        return extract_expression  # 直接返回提取表达式
     try:
         # 使用jmespath表达式从字典对象中提取出对应数据
         extract_value = jmespath.search(extract_expression, extract_obj)
@@ -115,22 +117,19 @@ def extract_by_regex(extract_obj: str, extract_expression: str):
              若匹配结果有多个，则返回一个列表。
     """
     # 判断extract_expression是否为字符串类型
-    # 如果extract_expression不是字符串类型，则直接返回提取表达式
-    if not isinstance(extract_expression, str):
-        return extract_expression
-
-    extract_value = re.findall(extract_expression, extract_obj, flags=re.S)
+    if not isinstance(extract_expression, str):  # 如果extract_expression不是字符串类型
+        return extract_expression  # 直接返回提取表达式
 
     # 调用re模块的findall方法，对extract_obj进行正则匹配
+    extract_value = re.findall(extract_expression, extract_obj, flags=re.S)
+
     if not extract_value:  # 如果未匹配到任何结果
         return ''  # 返回空字符串
 
     # 如果匹配结果只有一个
     elif len(extract_value) == 1:
-        # 返回第一个匹配结果
-        return extract_value[0]
+        return extract_value[0]  # 返回第一个匹配结果
 
     # 如果匹配结果有多个
     else:
-        # 返回包含所有匹配结果的列表
-        return extract_value
+        return extract_value  # 返回包含所有匹配结果的列表

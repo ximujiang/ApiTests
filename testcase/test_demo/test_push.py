@@ -6,9 +6,9 @@ from utils.log import log
 
 class TestDemo(Tenant):
 
-    def test_demo_one(self, data):
+    def test_demo_one(self):
         # pass
-        res = self.push_service.find_context_aware_event_service('find_context_aware_event_service', data)
-        log.debug(res.text)
+        res = self.push_service.find_context_aware_event_service('find_context_aware_event_service')
+        print(f'xxxxxxxxxx{res}')
 
 
