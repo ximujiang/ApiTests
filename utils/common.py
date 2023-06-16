@@ -170,7 +170,7 @@ def get_test_data(step):
     :return: 测试步骤
     """
     # 获取当前测试数据文件和测试函数名
-    test_data_file, func_name = get_data_file_and_test_name()
+    test_data_file, func_name = get_test_data_file()
     # 检查测试数据文件是否存在
     check_file(test_data_file)
     # 读取测试数据
@@ -192,7 +192,7 @@ def update_test_data(step, value):
     :return: 无返回值
     """
     # 获取当前测试数据文件和测试函数名
-    test_data_file, func_name = get_data_file_and_test_name()
+    test_data_file, func_name = get_test_data_file()
     # 读取测试数据
     data = read_yaml(test_data_file)
     # 更新需要提取值的步骤
@@ -202,19 +202,31 @@ def update_test_data(step, value):
         yaml.safe_dump(data, f, default_flow_style=False)
 
 
-def get_data_file_and_test_name():
+def get_test_data_file():
+    """
+    获取当前运行测试用例的文件名和测试方法名，构造测试数据文件的路径
+    :return: 返回测试数据文件路径和测试方法名
+    """
     frame = inspect.currentframe()
-    # 构造测试数据文件的路径
     filename = None
     func_name = None
     while frame:
-        filename = frame.f_code.co_filename
-        if os.path.basename(filename).startswith('test_'):
-            func_name = frame.f_code.co_name
+        filename = frame.f_code.co_filename  # 获取当前运行测试用例的文件名
+        if is_test_file(filename):  # 判断文件名以 "test" 开头或者以 "test" 结尾
+            func_name = frame.f_code.co_name  # 获取当前运行的测试方法名
             break
         frame = frame.f_back
     if filename is None:
         raise ValueError("Cannot find test data file.")
     dirname = os.path.dirname(filename)
+    # 构造测试数据文件路径，文件名为当前运行测试用例的文件名去除扩展名后加上'_data.yaml'
     test_data_file = os.path.join(dirname, f"{os.path.splitext(os.path.basename(filename))[0]}_data.yaml")
     return test_data_file, func_name
+
+
+def is_test_file(file_path):
+    """
+    判断传入的文件路径是否为测试文件
+    """
+    file_name = os.path.basename(file_path)
+    return file_name.startswith('test') or file_name.endswith('test')

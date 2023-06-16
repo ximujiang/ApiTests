@@ -4,14 +4,6 @@ from utils.log import log
 
 
 class NewDict(dict):
-    """dict按点方式取值
-        a = {
-                "x": 123,
-                "y": "hello"
-            }
-        print(a.x)
-    """
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -22,70 +14,86 @@ class NewDict(dict):
         return value
 
 
+# 将模板字符串中的变量解析为字符串，用实际的值替换
+def replace_template_str(template_str, *args, **kwargs):
+    def _replace_match(match) -> str:
+        res = match.group()
+        res_ = str(res).lstrip('${').rstrip('}')
+
+        # 如果模板字符串嵌套了变量，则需要先将嵌套的变量解析为字符串，再用实际值替换
+        if res_.count('${') > res_.count('}'):
+            return res
+        instance = Template(res_, variable_start_string='${', variable_end_string='}')
+        return '${' + instance.render(*args, **kwargs) + '}'
+
+    return re.sub('\$\{(.+?)\}', _replace_match, template_str)
+
+
+# 渲染模板字符串
 def rend_template_str(template_str, *args, **kwargs):
-    """
-       渲染模板字符串, 改写了默认的引用变量语法{{var}}, 换成${var}
-            模板中引用变量语法 ${var},
-            调用函数 ${fun()}
-        :return: 渲染之后的值
-    """
+    # 重新解析可能嵌套了变量的模板字符串
+    def _render_template(template_str):
+        instance = Template(template_str, variable_start_string='${', variable_end_string='}')
+        return instance.render(**kwargs)
 
-    # -------------解决函数内部参数引用变量-------
-    def re_replace_template_str(match) -> str:
-        """匹配的值--渲染模板加载内部引用变量"""
-        res_result = match.group()
-        res_result_ = str(res_result).lstrip('${').rstrip('}')
-        print(res_result_)
-        if '${' in res_result_ and '}' in res_result_ and res_result_.find('${') < res_result_.find('}'):
-            # 渲染结果
-            instance_temp = Template(res_result_, variable_start_string='${', variable_end_string='}')
-            temp_render_res = instance_temp.render(*args, **kwargs)
-            return '${' + temp_render_res + '}'
-        else:
-            return res_result
+    # 判断模板字符串是否为单个变量，并且变量名为数字
+    def _is_numeric_variable(template_str):
+        # 如果模板字符串不是单个变量，则不是数字变量
+        if not _is_single_variable(template_str):
+            return False
+        variable_name = template_str.lstrip('${').rstrip('}')
+        # 如果变量名不以点开头，或者点后面不是数字，则不是数字变量
+        if not variable_name.startswith('.') or not variable_name[1:].isdigit():
+            return False
+        return True
 
-    template_str = re.sub('\$\{(.+)\}', re_replace_template_str, template_str)  # noqa
-    # ----------------end----------
+    # 用数字变量名解析出对应的实际值
+    def _resolve_numeric_variable(template_str):
+        variable_name = template_str.lstrip('${').rstrip('}')
+        index = int(variable_name[1:])
+        value = args[0][index]
+        return value
 
-    instance_template = Template(template_str, variable_start_string='${', variable_end_string='}')
-    template_render_res = instance_template.render(*args, **kwargs)
-    if template_str.startswith("${") and template_str.endswith("}") and template_str.count('${') == 1:
-        try:
-            template_raw_str = template_str.rstrip('}').lstrip('${')
-            # 先判断有没有list 取值如： user.0 换成[0]
-            template_find_res = re.findall('\.[0-9]+', template_raw_str)
-            if template_find_res:
-                for template_i in template_find_res:
-                    template_raw_str = template_raw_str.replace(template_i, f"[{str(template_i).lstrip('.')}]")
-            # 根据表达式取值
-            log.info(f"取值表达式 {template_raw_str}")
-            locals().update(**NewDict(kwargs))  # 更新成本地变量
-            for kwargs_locals_key, kwargs_locals_value in kwargs.items():
-                if isinstance(kwargs_locals_value, dict):
-                    locals()[kwargs_locals_key] = NewDict(kwargs_locals_value)
-                else:
-                    locals()[kwargs_locals_key] = kwargs_locals_value
-            template_render_result = eval(template_raw_str)
-            log.info(f"取值结果：{template_render_result}, {type(template_render_result)}")
-            return template_render_result
-        except Exception:  # noqa
-            log.info(f"取值异常：{template_str}, 返回模板渲染结果: {template_render_res}")
-            return template_render_res
+    # 判断模板字符串是否为单个变量
+    def _is_single_variable(template_str):
+        stripped = template_str.strip()
+        return stripped.startswith('${') and stripped.endswith('}') and stripped.count('${') == 1
+
+    # 如果模板字符串为数字变量，则使用相应的值替换它
+    if _is_numeric_variable(template_str):
+        value = _resolve_numeric_variable(template_str)
+        log.debug(f"resolved {template_str} to {value}")
+        return value
+
+    # 如果模板字符串不是数字变量，则需进一步解析
     else:
-        return template_render_res
+        # 先将嵌套变量解析为字符串，得到一个新的模板字符串
+        rendered = replace_template_str(template_str, *args, **kwargs)
+        # 使用新的模板字符串渲染出最终结果
+        result = _render_template(rendered)
+        log.debug(f"rendered {template_str} to {result}")
+        return result
 
 
 def rend_template_obj(t_obj: dict, *args, **kwargs):
     """
-       传 dict 对象，通过模板字符串递归查找模板字符串，转行成新的数据
+    渲染模板对象，将其中的占位符替换为实际的值
+
+    :param t_obj: dict类型，需要渲染的模板对象
+    :param args: 传递给渲染模板字符串的位置参数
+    :param kwargs: 传递给渲染模板字符串的关键字参数
+    :return: 渲染后的模板对象
     """
     if isinstance(t_obj, dict):
         for key, value in t_obj.items():
             if isinstance(value, str):
+                # 如果value为字符串，则调用rend_template_str渲染模板字符串
                 t_obj[key] = rend_template_str(value, *args, **kwargs)
             elif isinstance(value, dict):
+                # 如果value为字典，则递归调用rend_template_obj渲染模板对象
                 rend_template_obj(value, *args, **kwargs)
             elif isinstance(value, list):
+                # 如果value为列表，则调用rend_template_array渲染模板列表
                 t_obj[key] = rend_template_array(value, *args, **kwargs)
             else:
                 pass
@@ -124,143 +132,3 @@ def rend_template_any(any_obj, *args, **kwargs):
         return any_obj
 
 
-if __name__ == '__main__':
-    data = {
-        "test_assert": [
-            {
-                "request": {
-                    "method": "GET",
-                    "url": "http://httpbin.org/get"
-                },
-                "validate": [
-                    {
-                        "eq": [
-                            "123",
-                            "123"
-                        ]
-                    },
-                    {
-                        "str_eq": [
-                            123,
-                            "123"
-                        ]
-                    },
-                    {
-                        "constains": [
-                            123,
-                            "12"
-                        ]
-                    },
-                    {
-                        "constains": [
-                            "123",
-                            "12"
-                        ]
-                    },
-                    {
-                        "constains": [
-                            [
-                                "hello",
-                                "world"
-                            ],
-                            "hello"
-                        ]
-                    },
-                    {
-                        "len_eq": [
-                            123,
-                            3
-                        ]
-                    },
-                    {
-                        "len_eq": [
-                            "123",
-                            3
-                        ]
-                    },
-                    {
-                        "len_eq": [
-                            "abc",
-                            3
-                        ]
-                    },
-                    {
-                        "gt": [
-                            123,
-                            100
-                        ]
-                    }
-                ]
-            }
-        ],
-        "test_assert1": [
-            {
-                "request": {
-                    "method": "GET",
-                    "url": "http://httpbin.org/get"
-                },
-                "validate": [
-                    {
-                        "eq": [
-                            "123",
-                            "123"
-                        ]
-                    },
-                    {
-                        "str_eq": [
-                            123,
-                            "123"
-                        ]
-                    },
-                    {
-                        "constains": [
-                            123,
-                            "12"
-                        ]
-                    },
-                    {
-                        "constains": [
-                            "123",
-                            "12"
-                        ]
-                    },
-                    {
-                        "constains": [
-                            [
-                                "hello",
-                                "world"
-                            ],
-                            "hello"
-                        ]
-                    },
-                    {
-                        "len_eq": [
-                            123,
-                            3
-                        ]
-                    },
-                    {
-                        "len_eq": [
-                            "123",
-                            3
-                        ]
-                    },
-                    {
-                        "len_eq": [
-                            "abc",
-                            3
-                        ]
-                    },
-                    {
-                        "gt": [
-                            123,
-                            100
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-    res = rend_template_any(data, data)
-
-    print(res)
